@@ -1,0 +1,34 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+# Load data
+pwt1001 = pd.read_stata('https://dataverse.nl/api/access/datafile/354098')
+
+# Filter and select relevant columns
+data = pwt1001.loc[pwt1001['country'].isin(['France','Germany','Canada','Italy','Japan','United Kingdom','United Status'])][['year', 'countrycode', 'rgdpna', 'rkna', 'pop', 'emp', 'avh', 'labsh', 'rtfpna']]
+data = data.loc[(data['year'] >= 1995) & (data['year'] <= 2019)].dropna()
+
+# Calculate additional variables
+data['alpha'] = 1 - data['labsh']
+data['y_n'] = data['rgdpna']   # Y
+data['hours'] = data['emp'] * data['avh']  # L
+data['tfp_term'] = data['rtfpna']   # A
+data['cap_term'] = (data['rkna'] ) ** (data['alpha'] )  # (K)^(alpha)
+data['lab_term'] = data['hours'] **(1-(data[alpha]))  # L^(1-alpha)
+data = data.sort_values('year').groupby('countrycode').apply(lambda x: x.assign()).reset_index(drop=True).dropna()
+ data['y']=data['y_n']/data['hours']
+ data['k']=((data['rkna'])/data['hours'])**data['alpha']
+ 
+
+# Print first 10 rows of data
+print(data.head(10))
+
+# Plot data
+plt.plot(data['year'], data['y_n_shifted'], label='y_n_shifted')
+plt.plot(data['year'], data['tfp_term_shifted'], label='tfp_term_shifted')
+plt.plot(data['year'], data['cap_term_shifted'], label='cap_term_shifted')
+plt.plot(data['year'], data['lab_term_shifted'], label='lab_term_shifted')
+plt.legend()
+plt.show()
+
