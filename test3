@@ -19,6 +19,8 @@ data['lab_term'] = data['hours'] **(1-(data[alpha]))  # L^(1-alpha)
 data = data.sort_values('year').groupby('countrycode').apply(lambda x: x.assign()).reset_index(drop=True).dropna()
  data['y']=data['y_n']/data['hours']
  data['k']=((data['rkna'])/data['hours'])**data['alpha']
+ ln(data['y'])=ln(data['tfp_term'])+data['alpha']*ln(data['k'])
+ 
  
 
 # Print first 10 rows of data
